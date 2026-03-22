@@ -1,0 +1,19 @@
+# Entorno
+.env
+*.local
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Docker volumes locales
+postgres_data/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
