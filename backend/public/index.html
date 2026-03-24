@@ -6,58 +6,7 @@
 <title>Caloria·AR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
-// ══════════════════════════════════════════════════════
-// MIS ALIMENTOS
-// ══════════════════════════════════════════════════════
-async function cargarMisAlimentos() {
-  try {
-    const d = await apiFetch('/alimentos/propios');
-    const lista = document.getElementById('mis-alimentos-lista');
-    if (!d.alimentos.length) {
-      lista.innerHTML = '<div class="empty">Todavía no agregaste alimentos propios</div>'; return;
-    }
-    lista.innerHTML = d.alimentos.map(a => `
-      <div class="food-entry" id="ma-${a.id}">
-        <div class="food-icon">⭐</div>
-        <div class="food-info">
-          <div class="food-name">${a.nombre}${a.marca ? ' · <span style="font-weight:400;color:var(--text2)">' + a.marca + '</span>' : ''}</div>
-          <div class="food-detail">${Math.round(a.calorias_100g)} kcal · ${Math.round(a.proteinas_100g)}g P · ${Math.round(a.carbohidratos_100g)}g C · ${Math.round(a.grasas_100g)}g G</div>
-        </div>
-        <button class="food-del" onclick="eliminarAlimentoPropio('${a.id}')">✕</button>
-      </div>`).join('');
-  } catch(e) { console.warn(e); }
-}
-
-async function crearAlimentoPropio() {
-  document.getElementById('ma-err').textContent = '';
-  const nombre = document.getElementById('ma-nombre').value.trim();
-  const marca  = document.getElementById('ma-marca').value.trim();
-  const cal    = +document.getElementById('ma-cal').value;
-  const prot   = +document.getElementById('ma-prot').value || 0;
-  const carb   = +document.getElementById('ma-carb').value || 0;
-  const gras   = +document.getElementById('ma-gras').value || 0;
-  if (!nombre || !cal) { document.getElementById('ma-err').textContent = 'Nombre y calorías son obligatorios'; return; }
-  try {
-    await apiFetch('/alimentos/propios', { method:'POST', body: JSON.stringify({
-      nombre, marca: marca||null, calorias_100g: cal,
-      proteinas_100g: prot, carbohidratos_100g: carb, grasas_100g: gras
-    })});
-    ['ma-nombre','ma-marca','ma-cal','ma-prot','ma-carb','ma-gras'].forEach(id => document.getElementById(id).value = '');
-    toast('Alimento guardado ✓');
-    cargarMisAlimentos();
-  } catch(e) { document.getElementById('ma-err').textContent = e.message; }
-}
-
-async function eliminarAlimentoPropio(id) {
-  try {
-    await apiFetch('/alimentos/propios/' + id, { method:'DELETE' });
-    const el = document.getElementById('ma-'+id);
-    if (el) { el.style.transition='.2s'; el.style.opacity='0'; setTimeout(()=>el.remove(),200); }
-    toast('Alimento eliminado');
-  } catch(e) { toast('Error al eliminar'); }
-}
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root {
   --bg:#F5F1EB;--surface:#FFFFFF;--surface2:#EDE9E1;
@@ -253,7 +202,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
 </head>
 <body>
 
-<!-- ═══ DISCLAIMER MODAL ════════════════════════════════════ -->
 <div class="disclaimer-overlay" id="disclaimer">
   <div class="disclaimer-box">
     <div class="disclaimer-icon">⚕️</div>
@@ -276,7 +224,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
   </div>
 </div>
 
-<!-- ═══ AUTH VIEW ═══════════════════════════════════════════ -->
 <div id="view-auth" class="view">
   <div class="auth-card">
     <div class="auth-logo">Caloria<span>·</span>AR</div>
@@ -306,7 +253,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
   </div>
 </div>
 
-<!-- ═══ DASHBOARD VIEW ═══════════════════════════════════════ -->
 <div id="view-dash" class="view">
 
   <div class="dash-header">
@@ -324,7 +270,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
     <div class="pmenu-item danger" onclick="doLogout()">↩ Cerrar sesión</div>
   </div>
 
-  <!-- ─── TAB: CALORÍAS ─────────────────────────── -->
   <div class="tab-section active" id="tab-calorias">
     <div class="date-nav">
       <button class="date-nav-btn" onclick="cambiarFecha(-1)">‹</button>
@@ -365,11 +310,9 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
     <div id="meals-container"></div>
   </div>
 
-  <!-- ─── TAB: PESO ─────────────────────────────── -->
   <div class="tab-section" id="tab-peso">
     <div style="padding-top:.5rem">
 
-      <!-- IMC Card -->
       <div id="imc-card-wrap">
         <div class="card" style="margin-bottom:.8rem">
           <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;margin-bottom:.5rem">Completá tu perfil para ver el IMC</div>
@@ -377,7 +320,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
         </div>
       </div>
 
-      <!-- Registrar peso hoy -->
       <div class="card" style="margin-bottom:.8rem">
         <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.8rem">Registrar peso hoy</div>
         <div class="form-grid" style="margin-bottom:.7rem">
@@ -393,7 +335,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
         <button class="btn-primary" onclick="registrarPeso()">Guardar peso</button>
       </div>
 
-      <!-- Historial -->
       <div class="card">
         <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.7rem">Historial de peso</div>
         <div class="periodo-tabs">
@@ -420,7 +361,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
     </div>
   </div>
 
-  <!-- ─── TAB: PERFIL ───────────────────────────── -->
   <div class="tab-section" id="tab-perfil">
     <div style="padding-top:.5rem">
       <div class="card">
@@ -458,7 +398,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
         <div class="err" id="perfil-err"></div>
       </div>
 
-      <!-- Resultados TDEE -->
       <div class="card hidden" id="tdee-card">
         <div style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.8rem">Tu plan nutricional</div>
         <div class="metric-row">
@@ -491,7 +430,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
   </div>
 
 
-  <!-- ─── TAB: MIS ALIMENTOS ───────────────────────── -->
   <div class="tab-section" id="tab-mis">
     <div style="padding-top:.5rem">
       <div class="card" style="margin-bottom:.8rem">
@@ -520,14 +458,10 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
     </div>
   </div>
 
-</div><!-- /view-dash -->
-
-<!-- ─── FAB ─── -->
-<button class="fab" id="fab" onclick="abrirBusqueda()">
+</div><button class="fab" id="fab" onclick="abrirBusqueda()">
   <span style="font-size:1.1rem">+</span> Registrar comida
 </button>
 
-<!-- ─── BOTTOM NAV ─── -->
 <nav class="bottom-nav" id="bottom-nav" style="display:none">
   <div class="nav-item active" id="nav-calorias" onclick="switchTab2('calorias')">
     <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
@@ -547,7 +481,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
   </div>
 </nav>
 
-<!-- ─── PANEL BÚSQUEDA ─── -->
 <div class="overlay" id="ov-busq" onclick="cerrarBusqueda()"></div>
 <div class="panel" id="panel-busq">
   <div class="panel-handle"></div>
@@ -564,7 +497,6 @@ body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min
   </div>
 </div>
 
-<!-- ─── PANEL AGREGAR ─── -->
 <div class="overlay" id="ov-add" onclick="cerrarAdd()"></div>
 <div class="panel" id="panel-add">
   <div class="panel-handle"></div>
@@ -825,11 +757,12 @@ function setRing(pct, meta, cons, rest, prot, carbs, fats) {
   document.getElementById('ring-cal').textContent  = Math.round(cons);
   document.getElementById('ring-meta').textContent = Math.round(meta)+' kcal';
   const rem = document.getElementById('ring-rest');
+  // Se usa valor por defecto 0 si los nutrientes son nulos para evitar NaN visual
   rem.textContent = over ? '+'+Math.abs(Math.round(rest))+' excedido' : Math.round(rest)+' kcal';
   rem.classList.toggle('over', over);
-  document.getElementById('mp').textContent = Math.round(prot)+'g';
-  document.getElementById('mc').textContent = Math.round(carbs)+'g';
-  document.getElementById('mg').textContent = Math.round(fats)+'g';
+  document.getElementById('mp').textContent = Math.round(prot || 0)+'g';
+  document.getElementById('mc').textContent = Math.round(carbs || 0)+'g';
+  document.getElementById('mg').textContent = Math.round(fats || 0)+'g';
 }
 
 function renderMeals(porTipo) {
