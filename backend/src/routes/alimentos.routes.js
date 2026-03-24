@@ -4,13 +4,12 @@ const pool    = require('../db/pool');
 const auth    = require('../middleware/auth');
 const router  = express.Router();
 
-// GET /api/alimentos/buscar
+// GET /api/alimentos/buscar (Búsqueda por texto - existente)
 router.get('/buscar', auth, async (req, res, next) => {
   try {
     const q = req.query.q?.trim();
     if (!q || q.length < 2) return res.status(400).json({ error: 'Minimo 2 caracteres' });
 
-    // 1. Buscar en alimentos creados por el usuario
     const { rows: propios } = await pool.query(
       `SELECT id::text AS food_api_id, nombre, marca,
               calorias_100g, proteinas_100g, carbohidratos_100g, grasas_100g, 'propio' AS origen
@@ -18,7 +17,6 @@ router.get('/buscar', auth, async (req, res, next) => {
       [req.user.id, '%' + q + '%']
     );
 
-    // 2. Buscar en la base de datos local
     const { rows: locales } = await pool.query(
       `SELECT food_api_id, nombre, marca,
               calorias_100g, proteinas_100g, carbohidratos_100g, grasas_100g, origen
@@ -30,7 +28,6 @@ router.get('/buscar', auth, async (req, res, next) => {
 
     const resultados = [...propios, ...locales];
 
-    // 3. Consultar API externa si hay pocos resultados locales
     if (resultados.length < 10) {
       try {
         const r = await axios.get('https://world.openfoodfacts.org/cgi/search.pl', {
@@ -38,7 +35,7 @@ router.get('/buscar', auth, async (req, res, next) => {
             search_terms: q, search_simple: 1, action: 'process', json: 1,
             page_size: 12, fields: 'code,product_name,product_name_es,brands,nutriments', lc: 'es' 
           },
-          headers: { 'User-Agent': 'CaloriaAR - ProyectoUNPAZ - v2.0' },
+          headers: { 'User-Agent': 'CaloriaAR - ProyectoUNPAZ - v2.1' },
           timeout: 6000,
         });
 
@@ -69,43 +66,11 @@ router.get('/buscar', auth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// GET /api/alimentos/propios
-router.get('/propios', auth, async (req, res, next) => {
+// NUEVA RUTA: GET /api/alimentos/barcode/:code (Para el Escáner)
+router.get('/barcode/:code', auth, async (req, res, next) => {
   try {
-    const { rows } = await pool.query(
-      'SELECT * FROM alimentos_usuario WHERE usuario_id = $1 ORDER BY nombre ASC',
-      [req.user.id]
-    );
-    res.json({ alimentos: rows, total: rows.length });
-  } catch (err) { next(err); }
-});
+    const { code } = req.params;
+    console.log(`[SCAN] Buscando código: ${code}`);
 
-// POST /api/alimentos/propios
-router.post('/propios', auth, async (req, res, next) => {
-  try {
-    const { nombre, marca, calorias_100g, proteinas_100g, carbohidratos_100g, grasas_100g } = req.body;
-    if (!nombre || !calorias_100g) return res.status(400).json({ error: 'Nombre y calorias requeridos' });
-    const { rows: [a] } = await pool.query(
-      `INSERT INTO alimentos_usuario
-         (usuario_id,nombre,marca,calorias_100g,proteinas_100g,carbohidratos_100g,grasas_100g)
-       VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-      [req.user.id, nombre.trim(), marca?.trim()||null,
-       calorias_100g, proteinas_100g||0, carbohidratos_100g||0, grasas_100g||0]
-    );
-    res.status(201).json(a);
-  } catch (err) { next(err); }
-});
-
-// DELETE /api/alimentos/propios/:id
-router.delete('/propios/:id', auth, async (req, res, next) => {
-  try {
-    const { rowCount } = await pool.query(
-      'DELETE FROM alimentos_usuario WHERE id = $1 AND usuario_id = $2',
-      [req.params.id, req.user.id]
-    );
-    if (!rowCount) return res.status(404).json({ error: 'No encontrado' });
-    res.json({ message: 'Eliminado' });
-  } catch (err) { next(err); }
-});
-
-module.exports = router;
+    const r = await axios.get(`https://world.openfoodfacts.org/api/v2/product/${code}.json`, {
+      params: { fields: 'code,product_name,product_name_es,brands,nutriments
