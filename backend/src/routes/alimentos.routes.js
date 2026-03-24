@@ -1,6 +1,6 @@
 const express = require('express');
 const axios   = require('axios');
-const pool    = require('../config/db'); // Ajustado a tu estructura de carpetas
+const pool    = require('../db/pool'); // CORREGIDO
 const auth    = require('../middleware/auth');
 const router  = express.Router();
 
@@ -10,7 +10,6 @@ router.get('/buscar', auth, async (req, res, next) => {
     const q = req.query.q?.trim();
     if (!q || q.length < 2) return res.status(400).json({ error: 'Mínimo 2 caracteres para buscar' });
 
-    // Buscamos en el nuevo catálogo unificado y en tus tablas base
     const querySQL = `
       SELECT codigo_barras AS food_api_id, nombre_alimento AS nombre, marca, 
              calorias_100g, proteinas_100g, carbohidratos_100g, grasas_100g, 'catalogo' AS origen
@@ -25,7 +24,6 @@ router.get('/buscar', auth, async (req, res, next) => {
     
     const { rows: resultadosLocales } = await pool.query(querySQL, ['%' + q + '%']);
 
-    // Si hay pocos resultados locales, pedimos ayuda a Open Food Facts
     if (resultadosLocales.length < 5) {
       try {
         const r = await axios.get('https://world.openfoodfacts.org/cgi/search.pl', {
@@ -52,29 +50,18 @@ router.get('/buscar', auth, async (req, res, next) => {
         resultadosLocales.push(...externos);
       } catch (apiErr) { console.error('[API SEARCH ERROR]:', apiErr.message); }
     }
-
     res.json({ resultados: resultadosLocales });
   } catch (err) { next(err); }
 });
 
-// ─── 2. ESCÁNER DE CÓDIGO DE BARRAS (La Joya de la Corona) ────────
+// ─── 2. ESCÁNER DE CÓDIGO DE BARRAS ──────────────────────────────
 router.get('/barcode/:code', auth, async (req, res, next) => {
   try {
     const { code } = req.params;
-    
-    // PASO A: ¿Ya lo tenemos en nuestro catálogo local?
-    const { rows } = await pool.query(
-      'SELECT * FROM catalogo_productos WHERE codigo_barras = $1', 
-      [code]
-    );
+    const { rows } = await pool.query('SELECT * FROM catalogo_productos WHERE codigo_barras = $1', [code]);
 
-    if (rows.length > 0) {
-      console.log(`[SCAN-LOCAL] Hit para: ${code}`);
-      return res.json(rows[0]);
-    }
+    if (rows.length > 0) return res.json(rows[0]);
 
-    // PASO B: No está local, le preguntamos a la API de Open Food Facts
-    console.log(`[SCAN-EXTERNAL] Consultando OFF para: ${code}`);
     const r = await axios.get(`https://world.openfoodfacts.org/api/v2/product/${code}.json`, {
       params: { fields: 'code,product_name,product_name_es,brands,nutriments' },
       timeout: 5000
@@ -83,8 +70,6 @@ router.get('/barcode/:code', auth, async (req, res, next) => {
     if (r.data.status === 1 && r.data.product) {
       const p = r.data.product;
       const n = p.nutriments || {};
-
-      // Mapeamos los datos de la API a nuestra estructura
       const nuevoProducto = {
         codigo_barras: p.code,
         nombre: p.product_name_es || p.product_name || 'Producto Desconocido',
@@ -95,24 +80,17 @@ router.get('/barcode/:code', auth, async (req, res, next) => {
         grasas:    +(n.fat_100g || 0).toFixed(1)
       };
 
-      // PASO C: Guardamos en el catálogo para la próxima vez
       await pool.query(
         `INSERT INTO catalogo_productos 
          (codigo_barras, nombre_alimento, marca, calorias_100g, proteinas_100g, carbohidratos_100g, grasas_100g, fuente_datos)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 'openfoodfacts')
-         ON CONFLICT (codigo_barras) DO NOTHING`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'openfoodfacts') ON CONFLICT DO NOTHING`,
         [nuevoProducto.codigo_barras, nuevoProducto.nombre, nuevoProducto.marca, 
          nuevoProducto.calorias, nuevoProducto.proteinas, nuevoProducto.carbos, nuevoProducto.grasas]
       );
-
       return res.json(nuevoProducto);
     }
-
-    res.status(404).json({ error: 'Producto no encontrado en ninguna base de datos' });
-  } catch (err) {
-    console.error('[SCAN-ERROR]:', err.message);
-    next(err);
-  }
+    res.status(404).json({ error: 'No encontrado' });
+  } catch (err) { next(err); }
 });
 
 module.exports = router;
