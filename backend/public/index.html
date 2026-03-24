@@ -67,7 +67,7 @@
         .overlay.open{display:block}
         
         #reader{width:100%;background:black;border-radius:12px;margin-bottom:10px}
-        .food-entry{background:white;padding:10px;border-radius:12px;margin-bottom:5px;border:1px solid var(--border);display:flex;justify-content:space-between}
+        .food-entry{background:white;padding:10px;border-radius:12px;margin-bottom:5px;border:1px solid var(--border);display:flex;justify-content:space-between; align-items: center; font-size: 0.85rem;}
     </style>
 </head>
 <body>
@@ -264,6 +264,30 @@ async function cargarDia() {
     } catch(e) { console.error(e); }
 }
 
+function renderListas(ejercicios, alimentos) {
+    // Render Ejercicio
+    const ejerCont = document.getElementById('ejer-list');
+    ejerCont.innerHTML = ejercicios.length > 0 ? '<p style="font-weight:800; font-size:.8rem; margin-bottom:5px">EJERCICIO</p>' : '';
+    ejercicios.forEach(e => {
+        ejerCont.innerHTML += `
+            <div class="food-entry" style="border-left: 4px solid var(--terra)">
+                <span>${e.nombre_actividad} (${e.duracion_minutos} min)</span>
+                <span style="color:var(--terra); font-weight:800">-${Math.round(e.calorias_quemadas)} kcal</span>
+            </div>`;
+    });
+
+    // Render Alimentos
+    const foodCont = document.getElementById('food-list');
+    foodCont.innerHTML = alimentos.length > 0 ? '<p style="font-weight:800; font-size:.8rem; margin-bottom:5px">COMIDAS</p>' : '';
+    alimentos.forEach(f => {
+        foodCont.innerHTML += `
+            <div class="food-entry" style="border-left: 4px solid var(--green)">
+                <span>${f.nombre_alimento} (${f.cantidad_gramos}g)</span>
+                <span style="color:var(--green); font-weight:800">+${Math.round(f.calorias_totales)} kcal</span>
+            </div>`;
+    });
+}
+
 async function ajustarAgua(inc) {
     if(!currentRegId) return;
     await apiFetch('/agua/ajustar', { 
@@ -298,10 +322,32 @@ async function buscarBarcode(code) {
         const p = await apiFetch('/alimentos/barcode/' + code);
         const gr = prompt(`Encontrado: ${p.nombre}. ¿Cuántos gramos consumiste?`, "100");
         if(gr) {
-            // Aquí llamarías a tu endpoint de guardar alimento usando p.calorias_100g, etc.
-            alert("¡Producto detectado! Implementa aquí el POST a /logs/comida");
+            registrarComidaDesdeEscaneo(p, gr);
         }
     } catch(e) { alert("Producto no encontrado en el catálogo."); }
+}
+
+async function registrarComidaDesdeEscaneo(producto, gramos) {
+    try {
+        await apiFetch('/logs/comida', {
+            method: 'POST',
+            body: JSON.stringify({
+                registro_diario_id: currentRegId,
+                nombre_alimento: producto.nombre,
+                calorias_100g: producto.calorias,
+                proteinas_100g: producto.proteinas,
+                carbohidratos_100g: producto.carbos,
+                grasas_100g: producto.grasas,
+                cantidad_gramos: gramos,
+                tipo_ingesta: 'snack'
+            })
+        });
+        cerrarBusqueda();
+        cargarDia();
+        alert("¡Comida registrada con éxito!");
+    } catch (e) {
+        alert("Error al registrar: " + e.message);
+    }
 }
 
 function detenerEscaneo() {
@@ -322,7 +368,6 @@ function cambiarFecha(inc) {
 }
 function abrirBusqueda() { document.getElementById('ov-busq').classList.add('open'); document.getElementById('panel-busq').classList.add('open'); }
 function cerrarBusqueda() { document.getElementById('ov-busq').classList.remove('open'); document.getElementById('panel-busq').classList.remove('open'); }
-function renderListas(e, f) { /* Lógica para mostrar los items en los divs correspondientes */ }
 function doLogout() { localStorage.clear(); location.reload(); }
 </script>
 
