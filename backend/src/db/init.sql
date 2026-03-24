@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════
--- Caloria-AR v2 · Schema PostgreSQL
+-- Caloria-AR v2.1 · Schema PostgreSQL (Agua & Ejercicio)
 -- Entidad-Relación normalizado (3FN)
 -- Materias: Bases de Datos 1 y 2 - UNPAZ
 -- ═══════════════════════════════════════════════════════════
@@ -13,36 +13,31 @@ CREATE TYPE ingesta_tipo     AS ENUM ('desayuno','almuerzo','merienda','cena','s
 CREATE TYPE objetivo_tipo    AS ENUM ('perder','mantener','ganar');
 
 -- ─── TABLA: usuarios ─────────────────────────────────────────
--- Almacena los datos de autenticación y perfil físico del usuario.
--- Decisión de diseño: calorie_goal se calcula server-side (TDEE * factor_objetivo)
--- y se cachea aquí para evitar recálculos en cada request.
 CREATE TABLE IF NOT EXISTS usuarios (
-  id                    UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-  email                 VARCHAR(255)  NOT NULL UNIQUE,
-  password_hash         VARCHAR(255)  NOT NULL,
-  nombre                VARCHAR(100),
-  peso_kg               DECIMAL(5,2),
-  altura_cm             DECIMAL(5,2),
-  edad                  INT,
-  genero                genero_tipo,
-  nivel_actividad       actividad_tipo DEFAULT 'sedentario',
-  objetivo              objetivo_tipo  DEFAULT 'mantener',
-  meta_calorica         INT,           -- TDEE ajustado según objetivo
-  acepto_terminos       BOOLEAN       NOT NULL DEFAULT FALSE,
+  id                  UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
+  email               VARCHAR(255)  NOT NULL UNIQUE,
+  password_hash       VARCHAR(255)  NOT NULL,
+  nombre              VARCHAR(100),
+  peso_kg             DECIMAL(5,2),
+  altura_cm           DECIMAL(5,2),
+  edad                INT,
+  genero              genero_tipo,
+  nivel_actividad     actividad_tipo DEFAULT 'sedentario',
+  objetivo            objetivo_tipo  DEFAULT 'mantener',
+  meta_calorica       INT,           -- TDEE ajustado según objetivo
+  meta_agua_ml        INT DEFAULT 2000, -- NUEVO: Meta de hidratación diaria
+  acepto_terminos     BOOLEAN       NOT NULL DEFAULT FALSE,
   acepto_terminos_fecha TIMESTAMP,
-  created_at            TIMESTAMP     NOT NULL DEFAULT NOW(),
-  updated_at            TIMESTAMP     NOT NULL DEFAULT NOW()
+  created_at          TIMESTAMP     NOT NULL DEFAULT NOW(),
+  updated_at          TIMESTAMP     NOT NULL DEFAULT NOW()
 );
 
 -- ─── TABLA: registro_peso ────────────────────────────────────
--- Historial de peso para análisis diario/semanal/mensual/trimestral.
--- Permite calcular tendencias con GROUP BY date_trunc() en PostgreSQL.
--- Una entrada por día por usuario (restricción UNIQUE compuesta).
 CREATE TABLE IF NOT EXISTS registro_peso (
   id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
   usuario_id  UUID         NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
   peso_kg     DECIMAL(5,2) NOT NULL,
-  imc         DECIMAL(5,2),            -- Calculado server-side y cacheado
+  imc         DECIMAL(5,2),             -- Calculado server-side y cacheado
   notas       TEXT,
   fecha       DATE         NOT NULL DEFAULT CURRENT_DATE,
   created_at  TIMESTAMP    NOT NULL DEFAULT NOW(),
@@ -50,20 +45,18 @@ CREATE TABLE IF NOT EXISTS registro_peso (
 );
 
 -- ─── TABLA: registro_diario ──────────────────────────────────
--- Agrupa todas las ingestas de un usuario en un día dado.
--- Permite consultas de tipo "resumen del día" eficientemente.
+-- Modificada para incluir los totales de agua y ejercicio
 CREATE TABLE IF NOT EXISTS registro_diario (
   id                        UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
   usuario_id                UUID    NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
   fecha                     DATE    NOT NULL DEFAULT CURRENT_DATE,
   total_calorias_consumidas DECIMAL(8,2) DEFAULT 0,
+  total_agua_ml             INT DEFAULT 0,           -- NUEVO: Sumatoria de hidratación
+  total_calorias_quemadas   DECIMAL(8,2) DEFAULT 0,  -- NUEVO: Sumatoria de gasto por ejercicio
   CONSTRAINT uq_diario_usuario_fecha UNIQUE (usuario_id, fecha)
 );
 
 -- ─── TABLA: entradas_alimentos ───────────────────────────────
--- Guarda los macros del alimento EN EL MOMENTO del registro.
--- Decisión: no FK a una tabla de alimentos para preservar el historial
--- aunque el producto cambie en Open Food Facts (integridad del historial).
 CREATE TABLE IF NOT EXISTS entradas_alimentos (
   id                  UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
   registro_diario_id  UUID         NOT NULL REFERENCES registro_diario(id) ON DELETE CASCADE,
@@ -77,14 +70,34 @@ CREATE TABLE IF NOT EXISTS entradas_alimentos (
   carbohidratos_100g  DECIMAL(7,2) NOT NULL DEFAULT 0,
   grasas_100g         DECIMAL(7,2) NOT NULL DEFAULT 0,
   cantidad_gramos     DECIMAL(7,2) NOT NULL DEFAULT 100,
-  -- Calorías totales de esta entrada (calculadas y guardadas para queries rápidas)
   calorias_totales    DECIMAL(7,2) GENERATED ALWAYS AS
                         (ROUND((calorias_100g * cantidad_gramos / 100), 2)) STORED,
   created_at          TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
+-- ─── TABLA: entradas_agua (NUEVA) ────────────────────────────
+-- Registra cada vez que el usuario toma agua
+CREATE TABLE IF NOT EXISTS entradas_agua (
+  id                  UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+  registro_diario_id  UUID      NOT NULL REFERENCES registro_diario(id) ON DELETE CASCADE,
+  usuario_id          UUID      NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  cantidad_ml         INT       NOT NULL CHECK (cantidad_ml > 0),
+  created_at          TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- ─── TABLA: entradas_ejercicio (NUEVA) ───────────────────────
+-- Registra cada actividad física realizada
+CREATE TABLE IF NOT EXISTS entradas_ejercicio (
+  id                  UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+  registro_diario_id  UUID         NOT NULL REFERENCES registro_diario(id) ON DELETE CASCADE,
+  usuario_id          UUID         NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+  nombre_actividad    VARCHAR(150) NOT NULL,
+  duracion_minutos    INT          NOT NULL CHECK (duracion_minutos > 0),
+  calorias_quemadas   DECIMAL(7,2) NOT NULL DEFAULT 0,
+  created_at          TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
 -- ─── ÍNDICES ─────────────────────────────────────────────────
--- Optimizan los queries más frecuentes del sistema
 CREATE INDEX IF NOT EXISTS idx_entradas_usuario_fecha
   ON entradas_alimentos(usuario_id, created_at DESC);
 
@@ -93,6 +106,13 @@ CREATE INDEX IF NOT EXISTS idx_registro_peso_usuario_fecha
 
 CREATE INDEX IF NOT EXISTS idx_diario_usuario_fecha
   ON registro_diario(usuario_id, fecha DESC);
+
+-- Nuevos índices para optimizar las consultas de agua y ejercicio
+CREATE INDEX IF NOT EXISTS idx_entradas_agua_usuario_fecha
+  ON entradas_agua(usuario_id, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_entradas_ejercicio_usuario_fecha
+  ON entradas_ejercicio(usuario_id, created_at DESC);
 
 -- ─── TRIGGER: actualizar updated_at ──────────────────────────
 CREATE OR REPLACE FUNCTION fn_update_updated_at()
@@ -104,19 +124,16 @@ CREATE TRIGGER trg_usuarios_updated_at
   BEFORE UPDATE ON usuarios
   FOR EACH ROW EXECUTE FUNCTION fn_update_updated_at();
 
--- ─── TRIGGER: sincronizar total del registro diario ──────────
--- Cada vez que se inserta/borra una entrada, recalcula el total del día.
+-- ─── TRIGGER: sincronizar total de alimentos ─────────────────
 CREATE OR REPLACE FUNCTION fn_sync_total_diario()
 RETURNS TRIGGER AS $$
-DECLARE v_reg_id UUID; v_usuario_id UUID; v_fecha DATE;
+DECLARE v_reg_id UUID; 
 BEGIN
   IF TG_OP = 'DELETE' THEN
-    v_reg_id := OLD.registro_diario_id; v_usuario_id := OLD.usuario_id;
+    v_reg_id := OLD.registro_diario_id; 
   ELSE
-    v_reg_id := NEW.registro_diario_id; v_usuario_id := NEW.usuario_id;
+    v_reg_id := NEW.registro_diario_id; 
   END IF;
-
-  SELECT fecha INTO v_fecha FROM registro_diario WHERE id = v_reg_id;
 
   UPDATE registro_diario
   SET total_calorias_consumidas = COALESCE(
@@ -131,6 +148,56 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_sync_total_diario
   AFTER INSERT OR UPDATE OR DELETE ON entradas_alimentos
   FOR EACH ROW EXECUTE FUNCTION fn_sync_total_diario();
+
+-- ─── TRIGGER: sincronizar total de agua (NUEVO) ──────────────
+CREATE OR REPLACE FUNCTION fn_sync_total_agua()
+RETURNS TRIGGER AS $$
+DECLARE v_reg_id UUID;
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    v_reg_id := OLD.registro_diario_id;
+  ELSE
+    v_reg_id := NEW.registro_diario_id;
+  END IF;
+
+  UPDATE registro_diario
+  SET total_agua_ml = COALESCE(
+    (SELECT SUM(cantidad_ml) FROM entradas_agua WHERE registro_diario_id = v_reg_id), 0
+  )
+  WHERE id = v_reg_id;
+
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_sync_total_agua
+  AFTER INSERT OR UPDATE OR DELETE ON entradas_agua
+  FOR EACH ROW EXECUTE FUNCTION fn_sync_total_agua();
+
+-- ─── TRIGGER: sincronizar total de ejercicio (NUEVO) ─────────
+CREATE OR REPLACE FUNCTION fn_sync_total_ejercicio()
+RETURNS TRIGGER AS $$
+DECLARE v_reg_id UUID;
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    v_reg_id := OLD.registro_diario_id;
+  ELSE
+    v_reg_id := NEW.registro_diario_id;
+  END IF;
+
+  UPDATE registro_diario
+  SET total_calorias_quemadas = COALESCE(
+    (SELECT SUM(calorias_quemadas) FROM entradas_ejercicio WHERE registro_diario_id = v_reg_id), 0
+  )
+  WHERE id = v_reg_id;
+
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_sync_total_ejercicio
+  AFTER INSERT OR UPDATE OR DELETE ON entradas_ejercicio
+  FOR EACH ROW EXECUTE FUNCTION fn_sync_total_ejercicio();
 
 -- ─── DATOS INICIALES (solo desarrollo) ───────────────────────
 -- Contraseña: Test1234!
