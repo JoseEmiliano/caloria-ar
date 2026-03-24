@@ -17,19 +17,19 @@
         }
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min-height:100vh;overflow-x:hidden}
-        .hidden{display:none!important}
+        .hidden { display: none !important; }
 
-        /* ── LAYOUT ─── */
-        .app-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg); display: flex; flex-direction: column; }
+        /* --- LAYOUT --- */
+        .app-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; background: var(--bg); display: flex; flex-direction: column; }
         header { padding: 1.5rem 1.25rem 0.5rem; display: flex; align-items: center; justify-content: space-between; }
         .brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--green); letter-spacing: -0.03em; }
         .brand span { color: var(--terra); }
 
-        /* ── CARDS ─── */
+        /* --- CARDS --- */
         .card { background: var(--surface); border-radius: var(--r); padding: 1.25rem; border: 1px solid var(--border); margin: 0 1.25rem 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
 
-        /* ── RING ─── */
+        /* --- RING --- */
         .ring-card { background: var(--green); color: white; display: flex; align-items: center; gap: 1.5rem; border: none; padding: 1.5rem; }
         .ring-wrap { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
         .ring-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
@@ -39,65 +39,55 @@
         .ring-cal { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; line-height: 1; }
         .ring-unit { font-size: 0.6rem; font-weight: 700; opacity: 0.7; }
 
-        /* ── MACROS ─── */
+        /* --- MACROS --- */
         .macros-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 0 1.25rem 1rem; }
         .macro-pill { background: white; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 0.8rem 0.5rem; text-align: center; }
         .m-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; display: block; }
         .m-lbl { font-size: 0.65rem; color: var(--text3); font-weight: 700; text-transform: uppercase; }
 
-        /* ── LISTS ─── */
-        .meal-group { margin-bottom: 1rem; }
+        /* --- LISTS --- */
         .meal-hd { padding: 0.5rem 1.5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text3); display: flex; justify-content: space-between; }
-        .food-item { background: white; margin: 0 1.25rem 0.5rem; padding: 1rem; border-radius: var(--r-sm); display: flex; align-items: center; gap: 0.8rem; border: 1px solid var(--border); transition: 0.2s; }
+        .food-item { background: white; margin: 0 1.25rem 0.5rem; padding: 1rem; border-radius: var(--r-sm); display: flex; align-items: center; gap: 0.8rem; border: 1px solid var(--border); }
         .food-info { flex: 1; min-width: 0; }
         .food-n { font-weight: 700; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .food-d { font-size: 0.72rem; color: var(--text3); }
         .food-c { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--green); }
-        .btn-del { background: none; border: none; color: var(--text3); cursor: pointer; padding: 5px; font-size: 1.1rem; }
+        .btn-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 1.1rem; }
 
-        /* ── IMC & PESO ─── */
-        .imc-badge { background: var(--green-lt); color: var(--green); padding: 2rem 1rem; border-radius: var(--r); text-align: center; margin: 0 1.25rem 1.5rem; }
-        .imc-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; line-height: 1; }
-        .imc-cat { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; margin-top: 0.5rem; }
+        /* --- FORMS --- */
+        .form-input { width: 100%; padding: 0.9rem 1.1rem; border-radius: var(--r-sm); border: 1.5px solid var(--border); background: var(--surface); font-family: inherit; font-size: 0.95rem; margin-bottom: 1rem; outline: none; }
+        .form-input:focus { border-color: var(--green); }
+        .btn-primary { width: 100%; padding: 1.1rem; background: var(--green); color: white; border: none; border-radius: var(--r-sm); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; }
 
-        /* ── FORMS ─── */
-        .form-label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text3); text-transform: uppercase; margin-bottom: 0.4rem; padding-left: 4px; }
-        .form-input { width: 100%; padding: 0.9rem 1.1rem; border-radius: var(--r-sm); border: 1.5px solid var(--border); background: var(--surface); font-family: inherit; font-size: 0.95rem; margin-bottom: 1rem; outline: none; transition: 0.2s; }
-        .form-input:focus { border-color: var(--green); background: white; }
-        .btn-primary { width: 100%; padding: 1.1rem; background: var(--green); color: white; border: none; border-radius: var(--r-sm); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-        .btn-primary:active { transform: scale(0.98); }
-
-        /* ── NAVIGATION ─── */
-        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border); display: flex; height: 5rem; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+        /* --- NAVIGATION --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border); display: flex; height: 5rem; z-index: 100; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--text3); font-size: 0.65rem; font-weight: 700; }
         .nav-item.active { color: var(--green); }
-        .nav-icon { font-size: 1.3rem; }
         .fab { position: fixed; bottom: 6.5rem; right: 1.5rem; width: 56px; height: 56px; background: var(--terra); color: white; border-radius: 50%; border: none; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(196,97,74,0.3); z-index: 90; cursor: pointer; }
 
-        /* ── PANELS ─── */
+        /* --- OVERLAYS --- */
+        .disclaimer-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .disclaimer-box { background: white; padding: 2.5rem 2rem; border-radius: 32px; text-align: center; border: 1px solid var(--border); max-width: 400px; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: none; backdrop-filter: blur(2px); }
         .overlay.open { display: block; }
-        .panel { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); width: 100%; max-width: 480px; background: white; border-radius: 32px 32px 0 0; z-index: 201; transition: 0.4s cubic-bezier(0, 1, 0, 1); padding: 2rem 1.5rem 2.5rem; }
+        .panel { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); width: 100%; max-width: 480px; background: white; border-radius: 32px 32px 0 0; z-index: 201; transition: 0.4s cubic-bezier(0, 1, 0, 1); padding: 2rem 1.5rem; }
         .panel.open { transform: translateX(-50%) translateY(0); }
-
-        /* ── AUTH SPLASH ─── */
-        .disclaimer-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 2rem; }
-        .disclaimer-box { background: white; padding: 2.5rem 2rem; border-radius: 32px; text-align: center; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
 <div id="disclaimer" class="disclaimer-overlay">
     <div class="disclaimer-box">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🥗</div>
-        <div class="brand" style="font-size: 2rem; margin-bottom: 0.5rem;">Caloria<span>·</span>AR</div>
-        <p style="color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin-bottom: 2rem;">Proyecto académico UNPAZ. Consulta a tu médico antes de realizar cambios nutricionales.</p>
-        <button class="btn-primary" onclick="aceptarDisclaimer()">Empezar ahora</button>
+        <div style="font-size: 3rem; margin-bottom: 1rem;">⚕️</div>
+        <div class="brand" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Caloria<span>·</span>AR</div>
+        <p style="color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin-bottom: 2rem;">
+            <b>Aviso Importante:</b> Esta herramienta es de apoyo académico y nutricional. No reemplaza la consulta profesional médica.
+        </p>
+        <button class="btn-primary" onclick="aceptarDisclaimer()">Entiendo y deseo continuar</button>
     </div>
 </div>
 
 <div id="view-auth" class="app-shell hidden" style="justify-content: center;">
-    <div class="card" style="padding: 2.5rem 2rem;">
+    <div class="card" style="padding: 2.5rem 2rem; margin-top: -5vh;">
         <div class="brand" style="text-align: center; font-size: 2.2rem; margin-bottom: 1.5rem;">Caloria<span>·</span>AR</div>
         <div style="display: flex; background: var(--bg); border-radius: 14px; padding: 4px; margin-bottom: 1.5rem;">
             <div id="t-login" class="nav-item active" onclick="switchAuth('login')" style="flex:1; padding: 0.75rem; border-radius: 11px;">Entrar</div>
@@ -106,13 +96,13 @@
         <div id="f-login">
             <input class="form-input" type="email" id="l-email" placeholder="Email">
             <input class="form-input" type="password" id="l-pass" placeholder="Contraseña">
-            <button class="btn-primary" onclick="doLogin()">Entrar</button>
+            <button class="btn-primary" onclick="doLogin()">Entrar a mi cuenta</button>
         </div>
         <div id="f-reg" class="hidden">
             <input class="form-input" type="text" id="r-nombre" placeholder="Nombre completo">
             <input class="form-input" type="email" id="r-email" placeholder="Email">
             <input class="form-input" type="password" id="r-pass" placeholder="Contraseña (mín 8)">
-            <button class="btn-primary" onclick="doRegister()">Crear Cuenta</button>
+            <button class="btn-primary" onclick="doRegister()">Crear mi cuenta</button>
         </div>
     </div>
 </div>
@@ -121,9 +111,9 @@
     <header>
         <div>
             <div class="brand">Caloria<span>·</span>AR</div>
-            <div id="fecha-label" style="font-size: 0.75rem; font-weight: 700; color: var(--text3); text-transform: uppercase; margin-top: 2px;">Martes 24 de Marzo</div>
+            <div id="fecha-label" style="font-size: 0.75rem; font-weight: 700; color: var(--text3); text-transform: uppercase;">Hoy</div>
         </div>
-        <button onclick="doLogout()" style="border: none; background: var(--surface2); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;">🚪</button>
+        <button onclick="doLogout()" style="border: none; background: var(--surface2); width: 42px; height: 42px; border-radius: 50%; cursor: pointer;">🚪</button>
     </header>
 
     <div id="sec-calorias">
@@ -144,8 +134,8 @@
                 </div>
             </div>
             <div class="ring-info">
-                <div id="ring-meta" class="meta-val">2000 kcal</div>
-                <div id="ring-rest" class="rest-val">Calculando...</div>
+                <div id="ring-meta" style="font-weight: 800; font-size: 1.1rem;">2000 kcal</div>
+                <div id="ring-rest" style="font-size: 0.85rem; opacity: 0.9;">Cargando...</div>
             </div>
         </div>
 
@@ -158,4 +148,320 @@
         <div id="meals-container"></div>
     </div>
 
-    <div id="
+    <div id="sec-peso" class="hidden">
+        <div class="card" style="text-align: center; background: var(--green-lt); border: none; padding: 2rem;">
+            <div id="imc-num" style="font-family: 'Syne', sans-serif; font-size: 3.5rem; font-weight: 800; color: var(--green);">--</div>
+            <div id="imc-cat" style="font-weight: 700; color: var(--green-mid); text-transform: uppercase; font-size: 0.75rem;">IMC</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Nuevo Registro de Peso</div>
+            <div style="display: flex; gap: 0.75rem;">
+                <input class="form-input" type="number" id="p-input" placeholder="75.0 kg" style="margin:0">
+                <button class="btn-primary" style="width: auto; padding: 0 1.5rem;" onclick="registrarPeso()">OK</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Gráfico de Progreso</div>
+            <div style="height: 180px;"><canvas id="peso-chart"></canvas></div>
+        </div>
+    </div>
+
+    <div id="sec-perfil" class="hidden">
+        <div class="card">
+            <div class="card-title">Configuración de Perfil</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div><label class="form-label">Peso (kg)</label><input class="form-input" type="number" id="perf-peso"></div>
+                <div><label class="form-label">Altura (cm)</label><input class="form-input" type="number" id="perf-altura"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div><label class="form-label">Edad</label><input class="form-input" type="number" id="perf-edad"></div>
+                <div><label class="form-label">Género</label>
+                    <select class="form-input" id="perf-genero"><option value="M">Masculino</option><option value="F">Femenino</option></select>
+                </div>
+            </div>
+            <label class="form-label">Nivel de Actividad</label>
+            <select class="form-input" id="perf-act">
+                <option value="sedentario">Sedentario</option>
+                <option value="moderado" selected>Moderado</option>
+                <option value="activo">Activo</option>
+            </select>
+            <button class="btn-primary" onclick="guardarPerfil()">Guardar y Recalcular</button>
+        </div>
+    </div>
+</div>
+
+<button class="fab" id="btn-fab" onclick="abrirBusqueda()">+</button>
+
+<nav class="bottom-nav hidden" id="main-nav">
+    <div class="nav-item active" id="n-cal" onclick="switchTab('calorias')">🏠<span>Hoy</span></div>
+    <div class="nav-item" id="n-peso" onclick="switchTab('peso')">📈<span>Peso</span></div>
+    <div class="nav-item" id="n-per" onclick="switchTab('perfil')">👤<span>Perfil</span></div>
+</nav>
+
+<div class="overlay" id="ov-busq" onclick="cerrarBusqueda()"></div>
+<div class="panel" id="panel-busq">
+    <div class="card-title">Buscar Alimento</div>
+    <input class="form-input" type="text" id="busq-input" placeholder="Ej: Pollo, Manzana, Pizza...">
+    <div id="busq-results" style="max-height: 45vh; overflow-y: auto;"></div>
+    <button class="btn-primary" style="margin-top: 1rem; background: var(--surface2); color: var(--text);" onclick="cerrarBusqueda()">Cancelar</button>
+</div>
+
+<div class="overlay" id="ov-add" onclick="cerrarAdd()"></div>
+<div class="panel" id="panel-add">
+    <div id="add-nombre" class="card-title" style="margin-bottom: 0.2rem;">---</div>
+    <div id="add-marca" style="font-size: 0.8rem; color: var(--text3); margin-bottom: 1.5rem;">---</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div><label class="form-label">Gramos</label><input class="form-input" type="number" id="add-qty" value="100"></div>
+        <div><label class="form-label">Momento</label>
+            <select class="form-input" id="add-tipo">
+                <option value="desayuno">Desayuno</option><option value="almuerzo">Almuerzo</option>
+                <option value="merienda">Merienda</option><option value="cena">Cena</option>
+                <option value="snack">Snack</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn-primary" onclick="doAgregar()">Registrar en Diario</button>
+</div>
+
+<script>
+    const API = '/api';
+    let token = localStorage.getItem('ca_token') || '';
+    let currentUser = null;
+    try {
+        currentUser = JSON.parse(localStorage.getItem('ca_user'));
+    } catch(e) { currentUser = null; }
+    
+    let currentDate = new Date().toISOString().split('T')[0];
+    let selectedFood = null;
+    let pesoChart = null;
+
+    window.onload = () => {
+        if(localStorage.getItem('ca_disclaimer')) {
+            document.getElementById('disclaimer').classList.add('hidden');
+            if(token) showDash(); else showAuth();
+        }
+    };
+
+    function aceptarDisclaimer() {
+        localStorage.setItem('ca_disclaimer', 'true');
+        document.getElementById('disclaimer').classList.add('hidden');
+        if(token) showDash(); else showAuth();
+    }
+
+    async function apiFetch(path, opts={}) {
+        const headers = { 'Content-Type': 'application/json' };
+        if(token) headers['Authorization'] = `Bearer ${token}`;
+        const res = await fetch(API + path, { headers, ...opts });
+        const data = await res.json();
+        if(!res.ok) throw new Error(data.error || 'Error');
+        return data;
+    }
+
+    function switchAuth(type) {
+        document.getElementById('f-login').classList.toggle('hidden', type !== 'login');
+        document.getElementById('f-reg').classList.toggle('hidden', type === 'login');
+        document.getElementById('t-login').classList.toggle('active', type === 'login');
+        document.getElementById('t-reg').classList.toggle('active', type !== 'login');
+    }
+
+    async function doLogin() {
+        try {
+            const email = document.getElementById('l-email').value;
+            const pass = document.getElementById('l-pass').value;
+            const d = await apiFetch('/auth/login', { method:'POST', body: JSON.stringify({email, pass}) });
+            token = d.token; currentUser = d.user;
+            localStorage.setItem('ca_token', token); localStorage.setItem('ca_user', JSON.stringify(currentUser));
+            showDash();
+        } catch(e) { alert("Error: " + e.message); }
+    }
+
+    async function doRegister() {
+        try {
+            const body = { 
+                nombre: document.getElementById('r-nombre').value,
+                email: document.getElementById('r-email').value,
+                pass: document.getElementById('r-pass').value
+            };
+            const d = await apiFetch('/auth/register', { method:'POST', body: JSON.stringify(body) });
+            token = d.token; currentUser = d.user;
+            localStorage.setItem('ca_token', token); localStorage.setItem('ca_user', JSON.stringify(currentUser));
+            showDash();
+        } catch(e) { alert("Error: " + e.message); }
+    }
+
+    function showAuth() { 
+        document.getElementById('view-auth').classList.remove('hidden'); 
+        document.getElementById('view-dash').classList.add('hidden');
+    }
+    
+    function showDash() {
+        document.getElementById('view-auth').classList.add('hidden');
+        document.getElementById('view-dash').classList.remove('hidden');
+        document.getElementById('main-nav').classList.remove('hidden');
+        cargarDia();
+    }
+
+    async function cargarDia() {
+        document.getElementById('fecha-label').textContent = currentDate;
+        try {
+            const d = await apiFetch('/logs/diario?fecha=' + currentDate);
+            const cons = d.total_calorias || 0;
+            const meta = d.meta_calorica || 2000;
+            const pct = Math.min(cons / meta, 1);
+            
+            document.getElementById('ring-fill').style.strokeDashoffset = 283 - (283 * pct);
+            document.getElementById('ring-cal').textContent = Math.round(cons);
+            document.getElementById('ring-meta').textContent = meta + ' kcal';
+            document.getElementById('ring-rest').textContent = (meta - cons) > 0 ? (meta - cons) + ' kcal restantes' : 'Meta alcanzada';
+            
+            document.getElementById('mp').textContent = Math.round(d.total_proteinas || 0) + 'g';
+            document.getElementById('mc').textContent = Math.round(d.total_carbos || 0) + 'g';
+            document.getElementById('mg').textContent = Math.round(d.total_grasas || 0) + 'g';
+
+            renderComidas(d.por_tipo || {});
+        } catch(e) { console.error(e); if(e.message.includes("401")) doLogout(); }
+    }
+
+    function renderComidas(tipos) {
+        const order = ['desayuno', 'almuerzo', 'merienda', 'cena', 'snack'];
+        const icons = { desayuno: '🌅', almuerzo: '🍽', merienda: '☕', cena: '🌙', snack: '🥪' };
+        let html = '';
+        order.forEach(t => {
+            const entries = tipos[t] || [];
+            if(entries.length > 0) {
+                html += `<div class="meal-hd"><span>${icons[t]} ${t}</span></div>`;
+                entries.forEach(f => {
+                    html += `
+                        <div class="food-item">
+                            <div class="food-info">
+                                <div class="food-n">${f.nombre_alimento}</div>
+                                <div class="food-d">${Math.round(f.cantidad_gramos)}g · ${f.marca || 'Genérico'}</div>
+                            </div>
+                            <div class="food-c">${Math.round(f.calorias_totales)}</div>
+                            <button class="btn-del" onclick="borrarEntry('${f.id}')">✕</button>
+                        </div>`;
+                });
+            }
+        });
+        document.getElementById('meals-container').innerHTML = html || '<p style="text-align:center; padding:3rem; opacity:0.5; font-size:0.8rem">No hay registros hoy</p>';
+    }
+
+    let sTimer;
+    document.getElementById('busq-input').oninput = (e) => {
+        clearTimeout(sTimer);
+        sTimer = setTimeout(async () => {
+            const q = e.target.value;
+            if(q.length < 2) return;
+            const d = await apiFetch('/alimentos/buscar?q=' + q);
+            document.getElementById('busq-results').innerHTML = d.resultados.map(r => `
+                <div class="food-item" onclick='seleccionarAlimento(${JSON.stringify(r)})' style="cursor:pointer; margin: 0 0 0.5rem 0;">
+                    <div class="food-info">
+                        <div class="food-n">${r.nombre}</div>
+                        <div class="food-d">${r.marca} · ${r.calorias_100g} kcal/100g</div>
+                    </div>
+                </div>
+            `).join('');
+        }, 400);
+    };
+
+    function seleccionarAlimento(f) {
+        selectedFood = f;
+        document.getElementById('add-nombre').textContent = f.nombre;
+        document.getElementById('add-marca').textContent = (f.marca || 'S/M') + ' · ' + f.calorias_100g + ' kcal/100g';
+        cerrarBusqueda();
+        document.getElementById('ov-add').classList.add('open');
+        document.getElementById('panel-add').classList.add('open');
+    }
+
+    async function doAgregar() {
+        await apiFetch('/logs', { method:'POST', body: JSON.stringify({
+            nombre_alimento: selectedFood.nombre,
+            calorias_100g: selectedFood.calorias_100g,
+            proteinas_100g: selectedFood.proteinas_100g,
+            carbohidratos_100g: selectedFood.carbohidratos_100g,
+            grasas_100g: selectedFood.grasas_100g,
+            cantidad_gramos: document.getElementById('add-qty').value,
+            tipo_ingesta: document.getElementById('add-tipo').value,
+            fecha: currentDate
+        })});
+        cerrarAdd(); cargarDia();
+    }
+
+    async function cargarPeso() {
+        try {
+            const d = await apiFetch('/peso?periodo=diario');
+            const p = d.registros || [];
+            if(p.length > 0) {
+                const ult = p[p.length-1];
+                document.getElementById('imc-num').textContent = ult.imc;
+                document.getElementById('imc-cat').textContent = (ult.imc < 18.5 ? 'Bajo Peso' : ult.imc < 25 ? 'Peso Normal' : 'Sobrepeso');
+            }
+            if(pesoChart) pesoChart.destroy();
+            pesoChart = new Chart(document.getElementById('peso-chart'), {
+                type: 'line',
+                data: { labels: p.map(x=>x.fecha), datasets: [{ data: p.map(x=>x.peso_kg), borderColor:'#2A4A2A', tension:0.4, fill: true, backgroundColor: 'rgba(42,74,42,0.1)' }] },
+                options: { plugins: {legend:{display:false}}, scales:{x:{display:false}, y:{grid:{display:false}}} }
+            });
+        } catch(e) { console.warn(e); }
+    }
+
+    async function registrarPeso() {
+        const peso = document.getElementById('p-input').value;
+        await apiFetch('/peso', { method:'POST', body: JSON.stringify({ peso_kg: peso }) });
+        document.getElementById('p-input').value = '';
+        cargarPeso();
+    }
+
+    async function cargarPerfil() {
+        const u = await apiFetch('/usuarios/me');
+        document.getElementById('perf-peso').value = u.peso_kg;
+        document.getElementById('perf-altura').value = u.altura_cm;
+        document.getElementById('perf-edad').value = u.edad;
+        document.getElementById('perf-genero').value = u.genero || 'M';
+        document.getElementById('perf-act').value = u.nivel_actividad || 'moderado';
+    }
+
+    async function guardarPerfil() {
+        const body = {
+            peso_kg: document.getElementById('perf-peso').value,
+            altura_cm: document.getElementById('perf-altura').value,
+            edad: document.getElementById('perf-edad').value,
+            genero: document.getElementById('perf-genero').value,
+            nivel_actividad: document.getElementById('perf-act').value
+        };
+        await apiFetch('/usuarios/me', { method:'PATCH', body: JSON.stringify(body) });
+        alert("Perfil y Meta Calórica actualizados ✓");
+        cargarDia();
+    }
+
+    function switchTab(tab) {
+        ['calorias', 'peso', 'perfil'].forEach(t => document.getElementById('sec-'+t).classList.add('hidden'));
+        ['n-cal', 'n-peso', 'n-per'].forEach(t => document.getElementById(t).classList.remove('active'));
+        document.getElementById('sec-'+tab).classList.remove('hidden');
+        document.getElementById('n-'+tab.substring(0,3)).classList.add('active');
+        document.getElementById('btn-fab').classList.toggle('hidden', tab !== 'calorias');
+        if(tab === 'peso') cargarPeso();
+        if(tab === 'perfil') cargarPerfil();
+    }
+
+    function cambiarFecha(n) {
+        let d = new Date(currentDate + 'T12:00:00');
+        d.setDate(d.getDate() + n);
+        currentDate = d.toISOString().split('T')[0];
+        cargarDia();
+    }
+
+    async function borrarEntry(id) {
+        if(!confirm('¿Eliminar registro?')) return;
+        await apiFetch('/logs/' + id, { method:'DELETE' });
+        cargarDia();
+    }
+
+    function abrirBusqueda() { document.getElementById('ov-busq').classList.add('open'); document.getElementById('panel-busq').classList.add('open'); }
+    function cerrarBusqueda() { document.getElementById('ov-busq').classList.remove('open'); document.getElementById('panel-busq').classList.remove('open'); }
+    function cerrarAdd() { document.getElementById('ov-add').classList.remove('open'); document.getElementById('panel-add').classList.remove('open'); }
+    function doLogout() { localStorage.clear(); location.reload(); }
+</script>
+
+</body>
+</html>
