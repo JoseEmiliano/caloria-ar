@@ -3,7 +3,7 @@ const pool    = require('../db/pool');
 const auth    = require('../middleware/auth');
 const router  = express.Router();
 
-// POST /api/logs
+// POST /api/logs - Registrar ingesta
 router.post('/', auth, async (req, res, next) => {
   try {
     const { tipo_ingesta, nombre_alimento, marca, foodApiId,
@@ -36,11 +36,12 @@ router.post('/', auth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-// GET /api/logs/diario
+// GET /api/logs/diario - El "Cerebro" del Dashboard
 router.get('/diario', auth, async (req, res, next) => {
   try {
     const fecha = req.query.fecha || new Date().toISOString().split('T')[0];
 
+    // 1. Obtener todas las comidas del día
     const { rows: entradas } = await pool.query(`
       SELECT ea.*, rd.fecha
       FROM entradas_alimentos ea
@@ -49,12 +50,26 @@ router.get('/diario', auth, async (req, res, next) => {
       ORDER BY ea.created_at ASC
     `, [req.user.id, fecha]);
 
+    // 2. Obtener todos los ejercicios del día (LA MEJORA)
+    const { rows: ejercicios } = await pool.query(
+      'SELECT * FROM registro_ejercicio WHERE usuario_id = $1 AND fecha = $2',
+      [req.user.id, fecha]
+    );
+
+    // 3. Obtener meta del usuario
     const { rows: [usuario] } = await pool.query(
       'SELECT meta_calorica FROM usuarios WHERE id = $1', [req.user.id]
     );
 
-    const totalCal = entradas.reduce((s, e) => s + +e.calorias_totales, 0);
-    const metaCal  = usuario?.meta_calorica || 2000;
+    // 4. CÁLCULOS TOTALES
+    const totalComida    = entradas.reduce((s, e) => s + +e.calorias_totales, 0);
+    const totalEjercicio = ejercicios.reduce((s, e) => s + +e.calorias_quemadas, 0);
+    const metaCal        = usuario?.meta_calorica || 2000;
+    
+    // Macros (importante para evitar el NaNg)
+    const totalProt  = entradas.reduce((s, e) => s + (e.proteinas_100g * e.cantidad_gramos / 100), 0);
+    const totalCarb  = entradas.reduce((s, e) => s + (e.carbohidratos_100g * e.cantidad_gramos / 100), 0);
+    const totalGras  = entradas.reduce((s, e) => s + (e.grasas_100g * e.cantidad_gramos / 100), 0);
 
     const porTipo = {};
     for (const e of entradas) {
@@ -64,11 +79,17 @@ router.get('/diario', auth, async (req, res, next) => {
 
     res.json({
       fecha,
-      total_calorias:    +totalCal.toFixed(1),
-      meta_calorica:     metaCal,
-      calorias_restantes: +(metaCal - totalCal).toFixed(1),
-      por_tipo:          porTipo,
+      meta_calorica:      metaCal,
+      total_comida:       +totalComida.toFixed(1),
+      total_ejercicio:    +totalEjercicio.toFixed(1),
+      total_calorias:     +totalComida.toFixed(1), // Mantenemos por compatibilidad
+      calorias_restantes: +((metaCal + totalEjercicio) - totalComida).toFixed(1),
+      total_proteinas:    +totalProt.toFixed(1),
+      total_carbos:       +totalCarb.toFixed(1),
+      total_grasas:       +totalGras.toFixed(1),
+      por_tipo:           porTipo,
       entradas,
+      ejercicios
     });
   } catch (err) { next(err); }
 });
