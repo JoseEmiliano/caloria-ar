@@ -13,95 +13,100 @@
             --green:#2A4A2A; --green-mid:#3D6B3D; --green-lt:#D4E8D4;
             --terra:#C4614A; --terra-lt:#F5E0DB;
             --text:#1C1C1A; --text2:#6B6860; --text3:#A09D98;
-            --border:rgba(0,0,0,.08); --r:20px; --r-sm:12px;
+            --border:rgba(0,0,0,.08); --r:24px; --r-sm:14px;
         }
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;min-height:100vh;overflow-x:hidden}
         .hidden{display:none!important}
 
-        /* --- HEADER & LAYOUT --- */
-        .app-container { max-width: 480px; margin: 0 auto; padding-bottom: 8rem; }
-        header { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem; }
-        .brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--green); letter-spacing: -0.02em; }
+        /* ── LAYOUT ─── */
+        .app-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg); display: flex; flex-direction: column; }
+        header { padding: 1.5rem 1.25rem 0.5rem; display: flex; align-items: center; justify-content: space-between; }
+        .brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--green); letter-spacing: -0.03em; }
         .brand span { color: var(--terra); }
 
-        /* --- CARDS --- */
-        .card { background: var(--surface); border-radius: var(--r); padding: 1.25rem; border: 1px solid var(--border); margin: 0 1.25rem 1rem; }
-        .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 1rem; color: var(--text); }
+        /* ── CARDS ─── */
+        .card { background: var(--surface); border-radius: var(--r); padding: 1.25rem; border: 1px solid var(--border); margin: 0 1.25rem 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 1rem; }
 
-        /* --- RING CALÓRICO --- */
-        .ring-card { background: var(--green); color: white; display: flex; align-items: center; gap: 1.5rem; border: none; }
-        .ring-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; }
-        .ring-svg { transform: rotate(-90deg); width: 110px; height: 110px; }
+        /* ── RING ─── */
+        .ring-card { background: var(--green); color: white; display: flex; align-items: center; gap: 1.5rem; border: none; padding: 1.5rem; }
+        .ring-wrap { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+        .ring-svg { transform: rotate(-90deg); width: 100px; height: 100px; }
         .ring-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 10; }
-        .ring-fill { fill: none; stroke: #7DC97D; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: stroke-dashoffset 1s ease; }
+        .ring-fill { fill: none; stroke: #7DC97D; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283; transition: 1s ease; }
         .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .ring-val { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; line-height: 1; }
-        .ring-unit { font-size: 0.65rem; opacity: 0.8; margin-top: 2px; }
-        .ring-info { flex: 1; }
-        .meta-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
-        .rest-val { font-size: 0.85rem; opacity: 0.9; margin-top: 4px; }
+        .ring-cal { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; line-height: 1; }
+        .ring-unit { font-size: 0.6rem; font-weight: 700; opacity: 0.7; }
 
-        /* --- MACROS --- */
-        .macros-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 0 1.25rem 1rem; }
-        .macro-pill { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 0.75rem; text-align: center; }
-        .macro-n { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; display: block; }
-        .macro-l { font-size: 0.65rem; color: var(--text3); font-weight: 600; text-transform: uppercase; }
+        /* ── MACROS ─── */
+        .macros-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin: 0 1.25rem 1rem; }
+        .macro-pill { background: white; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 0.8rem 0.5rem; text-align: center; }
+        .m-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; display: block; }
+        .m-lbl { font-size: 0.65rem; color: var(--text3); font-weight: 700; text-transform: uppercase; }
 
-        /* --- LISTAS --- */
-        .meal-section { margin-top: 0.5rem; }
-        .meal-header { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text3); padding: 0.5rem 1.5rem; display: flex; justify-content: space-between; }
-        .food-item { background: var(--surface); margin: 0 1.25rem 0.5rem; padding: 1rem; border-radius: var(--r-sm); border: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
-        .food-icon { width: 36px; height: 36px; background: var(--bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-        .food-body { flex: 1; min-width: 0; }
+        /* ── LISTS ─── */
+        .meal-group { margin-bottom: 1rem; }
+        .meal-hd { padding: 0.5rem 1.5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text3); display: flex; justify-content: space-between; }
+        .food-item { background: white; margin: 0 1.25rem 0.5rem; padding: 1rem; border-radius: var(--r-sm); display: flex; align-items: center; gap: 0.8rem; border: 1px solid var(--border); transition: 0.2s; }
+        .food-info { flex: 1; min-width: 0; }
         .food-n { font-weight: 700; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .food-d { font-size: 0.75rem; color: var(--text3); }
+        .food-d { font-size: 0.72rem; color: var(--text3); }
         .food-c { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--green); }
-        .btn-del { background: none; border: none; color: var(--text3); padding: 5px; cursor: pointer; }
+        .btn-del { background: none; border: none; color: var(--text3); cursor: pointer; padding: 5px; font-size: 1.1rem; }
 
-        /* --- UI COMPONENTS --- */
-        .fab { position: fixed; bottom: 5.5rem; right: 1.25rem; background: var(--green); color: white; border: none; border-radius: 100px; padding: 1rem 1.5rem; font-family: 'Syne', sans-serif; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 8px 24px rgba(42,74,42,0.3); z-index: 100; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); display: flex; height: 4.5rem; z-index: 101; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text3); font-size: 0.65rem; font-weight: 700; cursor: pointer; gap: 4px; }
+        /* ── IMC & PESO ─── */
+        .imc-badge { background: var(--green-lt); color: var(--green); padding: 2rem 1rem; border-radius: var(--r); text-align: center; margin: 0 1.25rem 1.5rem; }
+        .imc-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; line-height: 1; }
+        .imc-cat { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; margin-top: 0.5rem; }
+
+        /* ── FORMS ─── */
+        .form-label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text3); text-transform: uppercase; margin-bottom: 0.4rem; padding-left: 4px; }
+        .form-input { width: 100%; padding: 0.9rem 1.1rem; border-radius: var(--r-sm); border: 1.5px solid var(--border); background: var(--surface); font-family: inherit; font-size: 0.95rem; margin-bottom: 1rem; outline: none; transition: 0.2s; }
+        .form-input:focus { border-color: var(--green); background: white; }
+        .btn-primary { width: 100%; padding: 1.1rem; background: var(--green); color: white; border: none; border-radius: var(--r-sm); font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .btn-primary:active { transform: scale(0.98); }
+
+        /* ── NAVIGATION ─── */
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border); display: flex; height: 5rem; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--text3); font-size: 0.65rem; font-weight: 700; }
         .nav-item.active { color: var(--green); }
-        .btn-primary { width: 100%; padding: 1rem; background: var(--green); color: white; border: none; border-radius: var(--r-sm); font-family: 'Syne', sans-serif; font-weight: 700; cursor: pointer; }
-        
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; }
+        .nav-icon { font-size: 1.3rem; }
+        .fab { position: fixed; bottom: 6.5rem; right: 1.5rem; width: 56px; height: 56px; background: var(--terra); color: white; border-radius: 50%; border: none; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(196,97,74,0.3); z-index: 90; cursor: pointer; }
+
+        /* ── PANELS ─── */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: none; backdrop-filter: blur(2px); }
         .overlay.open { display: block; }
-        .panel { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); width: 100%; max-width: 480px; background: white; border-radius: 24px 24px 0 0; z-index: 201; transition: 0.4s cubic-bezier(0, 1, 0, 1); padding: 1.5rem; }
+        .panel { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%); width: 100%; max-width: 480px; background: white; border-radius: 32px 32px 0 0; z-index: 201; transition: 0.4s cubic-bezier(0, 1, 0, 1); padding: 2rem 1.5rem 2.5rem; }
         .panel.open { transform: translateX(-50%) translateY(0); }
-        
-        .form-input { width: 100%; padding: 0.85rem; border-radius: 12px; border: 1.5px solid var(--border); margin-bottom: 1rem; font-family: inherit; outline: none; }
-        .form-input:focus { border-color: var(--green); }
-        .toast { position: fixed; bottom: 6rem; left: 50%; transform: translateX(-50%); background: var(--text); color: white; padding: 0.75rem 1.5rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; z-index: 300; opacity: 0; transition: 0.3s; }
-        .toast.show { opacity: 1; }
+
+        /* ── AUTH SPLASH ─── */
+        .disclaimer-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .disclaimer-box { background: white; padding: 2.5rem 2rem; border-radius: 32px; text-align: center; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
 <div id="disclaimer" class="disclaimer-overlay">
     <div class="disclaimer-box">
-        <div class="disclaimer-icon">⚕️</div>
-        <div class="disclaimer-title">Atención Médica</div>
-        <p style="font-size: 0.85rem; color: var(--text2); line-height: 1.6; margin-bottom: 1.5rem;">Esta aplicación es de carácter informativo. Por favor, consulta a un profesional antes de realizar cambios en tu dieta.</p>
-        <button class="btn-primary" onclick="aceptarDisclaimer()">Acepto los términos</button>
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🥗</div>
+        <div class="brand" style="font-size: 2rem; margin-bottom: 0.5rem;">Caloria<span>·</span>AR</div>
+        <p style="color: var(--text2); font-size: 0.85rem; line-height: 1.6; margin-bottom: 2rem;">Proyecto académico UNPAZ. Consulta a tu médico antes de realizar cambios nutricionales.</p>
+        <button class="btn-primary" onclick="aceptarDisclaimer()">Empezar ahora</button>
     </div>
 </div>
 
-<div id="view-auth" class="app-container hidden" style="padding-top: 10vh">
-    <div class="card" style="margin: 0 1.5rem;">
-        <div class="brand" style="font-size: 2rem; text-align: center; margin-bottom: 0.5rem;">Caloria<span>·</span>AR</div>
-        <p style="text-align: center; font-size: 0.85rem; color: var(--text2); margin-bottom: 2rem;">Tu bienestar, bajo control.</p>
-        
-        <div class="auth-tabs" style="display: flex; background: var(--bg); padding: 4px; border-radius: 12px; margin-bottom: 1.5rem;">
-            <div id="tab-login" class="auth-tab active" onclick="switchAuth('login')" style="flex:1; text-align:center; padding: 0.6rem; cursor:pointer; border-radius: 10px;">Ingresar</div>
-            <div id="tab-reg" class="auth-tab" onclick="switchAuth('reg')" style="flex:1; text-align:center; padding: 0.6rem; cursor:pointer; border-radius: 10px;">Registrarse</div>
+<div id="view-auth" class="app-shell hidden" style="justify-content: center;">
+    <div class="card" style="padding: 2.5rem 2rem;">
+        <div class="brand" style="text-align: center; font-size: 2.2rem; margin-bottom: 1.5rem;">Caloria<span>·</span>AR</div>
+        <div style="display: flex; background: var(--bg); border-radius: 14px; padding: 4px; margin-bottom: 1.5rem;">
+            <div id="t-login" class="nav-item active" onclick="switchAuth('login')" style="flex:1; padding: 0.75rem; border-radius: 11px;">Entrar</div>
+            <div id="t-reg" class="nav-item" onclick="switchAuth('reg')" style="flex:1; padding: 0.75rem; border-radius: 11px;">Registrarse</div>
         </div>
-
         <div id="f-login">
             <input class="form-input" type="email" id="l-email" placeholder="Email">
             <input class="form-input" type="password" id="l-pass" placeholder="Contraseña">
-            <button class="btn-primary" onclick="doLogin()">Ingresar</button>
+            <button class="btn-primary" onclick="doLogin()">Entrar</button>
         </div>
         <div id="f-reg" class="hidden">
             <input class="form-input" type="text" id="r-nombre" placeholder="Nombre completo">
@@ -112,16 +117,21 @@
     </div>
 </div>
 
-<div id="view-dash" class="app-container hidden">
+<div id="view-dash" class="app-shell hidden">
     <header>
         <div>
             <div class="brand">Caloria<span>·</span>AR</div>
-            <div style="font-size: 0.8rem; color: var(--text3); font-weight: 700;" id="fecha-label">Hoy</div>
+            <div id="fecha-label" style="font-size: 0.75rem; font-weight: 700; color: var(--text3); text-transform: uppercase; margin-top: 2px;">Martes 24 de Marzo</div>
         </div>
-        <button onclick="doLogout()" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--surface2); cursor: pointer;">🚪</button>
+        <button onclick="doLogout()" style="border: none; background: var(--surface2); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;">🚪</button>
     </header>
 
-    <div id="tab-calorias">
+    <div id="sec-calorias">
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 1.25rem 1rem;">
+            <button onclick="cambiarFecha(-1)" style="border:none; background:none; font-weight:700; color:var(--text2)">‹ Anterior</button>
+            <button onclick="cambiarFecha(1)" style="border:none; background:none; font-weight:700; color:var(--text2)">Siguiente ›</button>
+        </div>
+
         <div class="card ring-card">
             <div class="ring-wrap">
                 <svg class="ring-svg" viewBox="0 0 100 100">
@@ -129,255 +139,23 @@
                     <circle class="ring-fill" id="ring-fill" cx="50" cy="50" r="45"/>
                 </svg>
                 <div class="ring-center">
-                    <div id="ring-cal" class="ring-val">0</div>
+                    <div id="ring-cal" class="ring-cal">0</div>
                     <div class="ring-unit">KCAL</div>
                 </div>
             </div>
             <div class="ring-info">
-                <div class="meta-val" id="ring-meta">2000 kcal</div>
-                <div class="rest-val" id="ring-rest">Cargando meta...</div>
+                <div id="ring-meta" class="meta-val">2000 kcal</div>
+                <div id="ring-rest" class="rest-val">Calculando...</div>
             </div>
         </div>
 
-        <div class="macros-grid">
-            <div class="macro-pill"><span id="mp" class="macro-n">0g</span><span class="macro-l">Prot</span></div>
-            <div class="macro-pill"><span id="mc" class="macro-n">0g</span><span class="macro-l">Carb</span></div>
-            <div class="macro-pill"><span id="mg" class="macro-n">0g</span><span class="macro-l">Gras</span></div>
+        <div class="macros-row">
+            <div class="macro-pill"><span id="mp" class="m-val">0g</span><span class="m-lbl">Prot</span></div>
+            <div class="macro-pill"><span id="mc" class="m-val">0g</span><span class="m-lbl">Carb</span></div>
+            <div class="macro-pill"><span id="mg" class="m-val">0g</span><span class="m-lbl">Gras</span></div>
         </div>
 
         <div id="meals-container"></div>
     </div>
 
-    <div id="tab-peso" class="hidden">
-        <div class="card" style="text-align: center; background: var(--green-lt); border: none;">
-            <div id="imc-val" style="font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: var(--green);">--</div>
-            <div id="imc-cat" style="font-weight: 700; color: var(--green-mid); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.1em;">IMC</div>
-        </div>
-        <div class="card">
-            <div class="card-title">Historial de Peso</div>
-            <div style="height: 200px;"><canvas id="peso-chart"></canvas></div>
-        </div>
-    </div>
-</div>
-
-<button class="fab" id="fab" onclick="abrirBusqueda()"><span>+</span> Registrar Comida</button>
-
-<nav class="bottom-nav hidden" id="main-nav">
-    <div class="nav-item active" id="n-cal" onclick="switchTab('calorias')">🏠<span>Dashboard</span></div>
-    <div class="nav-item" id="n-peso" onclick="switchTab('peso')">📈<span>Peso</span></div>
-    <div class="nav-item" onclick="alert('Perfil en construcción')">👤<span>Perfil</span></div>
-</nav>
-
-<div class="overlay" id="ov-busq" onclick="cerrarBusqueda()"></div>
-<div class="panel" id="panel-busq">
-    <div class="card-title">Buscar Alimento</div>
-    <input class="form-input" type="text" id="busq-input" placeholder="Ej: Arroz, Pollo, Manzana...">
-    <div id="busq-results" style="max-height: 50vh; overflow-y: auto;"></div>
-    <button class="btn-primary" style="margin-top: 1rem; background: var(--surface2); color: var(--text);" onclick="cerrarBusqueda()">Cancelar</button>
-</div>
-
-<div class="overlay" id="ov-add" onclick="cerrarAdd()"></div>
-<div class="panel" id="panel-add">
-    <div id="add-nombre" class="card-title">Nombre Alimento</div>
-    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-        <div style="flex: 1;">
-            <label style="font-size: 0.7rem; font-weight: 700; color: var(--text3);">CANTIDAD (G)</label>
-            <input class="form-input" type="number" id="add-qty" value="100">
-        </div>
-        <div style="flex: 1;">
-            <label style="font-size: 0.7rem; font-weight: 700; color: var(--text3);">INGESTA</label>
-            <select class="form-input" id="add-tipo">
-                <option value="desayuno">🌅 Desayuno</option>
-                <option value="almuerzo">🍽 Almuerzo</option>
-                <option value="merienda">☕ Merienda</option>
-                <option value="cena">🌙 Cena</option>
-                <option value="snack">🥪 Snack</option>
-            </select>
-        </div>
-    </div>
-    <button class="btn-primary" onclick="doAgregar()">Agregar al Diario</button>
-</div>
-
-<div id="toast" class="toast">Aviso del sistema</div>
-
-<script>
-    const API = '/api';
-    let token = localStorage.getItem('ca_token') || '';
-    let currentUser = JSON.parse(localStorage.getItem('ca_user') || 'null');
-    let currentDate = new Date().toISOString().split('T')[0];
-    let selectedFood = null;
-    let pesoChart = null;
-
-    window.onload = () => {
-        if(localStorage.getItem('ca_disclaimer')) {
-            document.getElementById('disclaimer').classList.add('hidden');
-            if(token) showDash(); else showAuth();
-        }
-    };
-
-    async function apiFetch(path, opts={}) {
-        const headers = { 'Content-Type': 'application/json' };
-        if(token) headers['Authorization'] = `Bearer ${token}`;
-        const res = await fetch(API + path, { headers, ...opts });
-        const data = await res.json();
-        if(!res.ok) throw new Error(data.error || 'Error');
-        return data;
-    }
-
-    function switchAuth(type) {
-        document.getElementById('f-login').classList.toggle('hidden', type !== 'login');
-        document.getElementById('f-reg').classList.toggle('hidden', type === 'login');
-        document.getElementById('tab-login').classList.toggle('active', type === 'login');
-        document.getElementById('tab-reg').classList.toggle('active', type !== 'login');
-    }
-
-    async function doLogin() {
-        try {
-            const body = { email: document.getElementById('l-email').value, pass: document.getElementById('l-pass').value };
-            const d = await apiFetch('/auth/login', { method:'POST', body: JSON.stringify(body) });
-            token = d.token; currentUser = d.user;
-            localStorage.setItem('ca_token', token); localStorage.setItem('ca_user', JSON.stringify(currentUser));
-            showDash();
-        } catch(e) { alert(e.message); }
-    }
-
-    async function doRegister() {
-        try {
-            const body = { 
-                nombre: document.getElementById('r-nombre').value,
-                email: document.getElementById('r-email').value,
-                pass: document.getElementById('r-pass').value
-            };
-            const d = await apiFetch('/auth/register', { method:'POST', body: JSON.stringify(body) });
-            token = d.token; currentUser = d.user;
-            localStorage.setItem('ca_token', token); localStorage.setItem('ca_user', JSON.stringify(currentUser));
-            showDash();
-        } catch(e) { alert(e.message); }
-    }
-
-    function showAuth() { document.getElementById('view-auth').classList.remove('hidden'); }
-    function showDash() {
-        document.getElementById('view-auth').classList.add('hidden');
-        document.getElementById('view-dash').classList.remove('hidden');
-        document.getElementById('main-nav').classList.remove('hidden');
-        cargarDia();
-    }
-
-    async function cargarDia() {
-        try {
-            const d = await apiFetch('/logs/diario?fecha=' + currentDate);
-            const cons = d.total_calorias || 0;
-            const meta = d.meta_calorica || 2000;
-            const pct = Math.min(cons / meta, 1);
-            
-            document.getElementById('ring-fill').style.strokeDashoffset = 283 - (283 * pct);
-            document.getElementById('ring-cal').textContent = Math.round(cons);
-            document.getElementById('ring-meta').textContent = meta + ' kcal';
-            document.getElementById('ring-rest').textContent = (meta - cons) > 0 ? (meta - cons) + ' restantes' : '¡Meta cumplida!';
-            
-            document.getElementById('mp').textContent = Math.round(d.total_proteinas || 0) + 'g';
-            document.getElementById('mc').textContent = Math.round(d.total_carbos || 0) + 'g';
-            document.getElementById('mg').textContent = Math.round(d.total_grasas || 0) + 'g';
-
-            renderComidas(d.por_tipo || {});
-        } catch(e) { console.error(e); }
-    }
-
-    function renderComidas(tipos) {
-        const order = ['desayuno', 'almuerzo', 'merienda', 'cena', 'snack'];
-        const icons = { desayuno: '🌅', almuerzo: '🍽', merienda: '☕', cena: '🌙', snack: '🥪' };
-        let html = '';
-        order.forEach(t => {
-            const entries = tipos[t] || [];
-            if(entries.length > 0) {
-                html += `<div class="meal-header"><span>${icons[t]} ${t}</span></div>`;
-                entries.forEach(f => {
-                    html += `
-                        <div class="food-item">
-                            <div class="food-icon">${icons[t]}</div>
-                            <div class="food-body">
-                                <div class="food-n">${f.nombre_alimento}</div>
-                                <div class="food-d">${Math.round(f.cantidad_gramos)}g · ${f.marca || 'S/M'}</div>
-                            </div>
-                            <div class="food-c">${Math.round(f.calorias_totales)}</div>
-                            <button class="btn-del" onclick="borrarEntry('${f.id}')">✕</button>
-                        </div>`;
-                });
-            }
-        });
-        document.getElementById('meals-container').innerHTML = html || '<p style="text-align:center; padding:2rem; color:var(--text3);">Sin registros hoy</p>';
-    }
-
-    let sTimer;
-    document.getElementById('busq-input').oninput = (e) => {
-        clearTimeout(sTimer);
-        sTimer = setTimeout(async () => {
-            const q = e.target.value;
-            if(q.length < 2) return;
-            const d = await apiFetch('/alimentos/buscar?q=' + q);
-            document.getElementById('busq-results').innerHTML = d.resultados.map(r => `
-                <div class="food-item" onclick='seleccionarAlimento(${JSON.stringify(r)})' style="cursor:pointer; margin: 0 0 0.5rem 0;">
-                    <div class="food-icon">🥗</div>
-                    <div class="food-body">
-                        <div class="food-n">${r.nombre}</div>
-                        <div class="food-d">${r.marca} · ${r.calorias_100g} kcal</div>
-                    </div>
-                </div>
-            `).join('');
-        }, 400);
-    };
-
-    function seleccionarAlimento(f) {
-        selectedFood = f;
-        document.getElementById('add-nombre').textContent = f.nombre;
-        cerrarBusqueda();
-        document.getElementById('ov-add').classList.add('open');
-        document.getElementById('panel-add').classList.add('open');
-    }
-
-    async function doAgregar() {
-        const qty = document.getElementById('add-qty').value;
-        const tipo = document.getElementById('add-tipo').value;
-        await apiFetch('/logs', { method:'POST', body: JSON.stringify({
-            nombre_alimento: selectedFood.nombre,
-            calorias_100g: selectedFood.calorias_100g,
-            proteinas_100g: selectedFood.proteinas_100g,
-            carbohidratos_100g: selectedFood.carbohidratos_100g,
-            grasas_100g: selectedFood.grasas_100g,
-            cantidad_gramos: qty,
-            tipo_ingesta: tipo,
-            fecha: currentDate
-        })});
-        showToast('Comida registrada ✓');
-        cerrarAdd(); cargarDia();
-    }
-
-    function switchTab(tab) {
-        document.getElementById('tab-calorias').classList.toggle('hidden', tab !== 'calorias');
-        document.getElementById('tab-peso').classList.toggle('hidden', tab !== 'peso');
-        document.getElementById('n-cal').classList.toggle('active', tab === 'calorias');
-        document.getElementById('n-peso').classList.toggle('active', tab === 'peso');
-        document.getElementById('fab').classList.toggle('hidden', tab !== 'calorias');
-    }
-
-    async function borrarEntry(id) {
-        if(!confirm('¿Eliminar?')) return;
-        await apiFetch('/logs/' + id, { method:'DELETE' });
-        cargarDia();
-    }
-
-    function showToast(m) {
-        const t = document.getElementById('toast');
-        t.textContent = m; t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2500);
-    }
-
-    function aceptarDisclaimer() { localStorage.setItem('ca_disclaimer', 'true'); document.getElementById('disclaimer').classList.add('hidden'); if(token) showDash(); else showAuth(); }
-    function abrirBusqueda() { document.getElementById('ov-busq').classList.add('open'); document.getElementById('panel-busq').classList.add('open'); }
-    function cerrarBusqueda() { document.getElementById('ov-busq').classList.remove('open'); document.getElementById('panel-busq').classList.remove('open'); }
-    function cerrarAdd() { document.getElementById('ov-add').classList.remove('open'); document.getElementById('panel-add').classList.remove('open'); }
-    function doLogout() { localStorage.clear(); location.reload(); }
-</script>
-
-</body>
-</html>
+    <div id="
